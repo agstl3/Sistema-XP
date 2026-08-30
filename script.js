@@ -1,7 +1,13 @@
 /* ==========================================================================
    LEVEL UP KIDS - CORE APPLICATION LOGIC
    ========================================================================== */
+const SUPABASE_URL = 'https://pukhhtefxjotjvgyaiwc.supabase.co/rest/v1/';
+const SUPABASE_KEY = 'sb_publishable_YNkkUU6LFxFIQrXF8XHN9g_zK_zXy7b';
 
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 // --- CONFIGURAÇÃO DE NÍVEIS ---
 const LEVELS = [
   { level: 1, name: 'COMEÇANDO', minXP: 0, maxXP: 99 },
@@ -59,7 +65,7 @@ let state = {
 };
 
 // --- INICIALIZAÇÃO ---
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   loadDataFromStorage();
   renderStudentSelectors();
   if (state.students.length > 0) {
@@ -70,19 +76,67 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAdminBadgesOptions();
 });
 
-// --- PERSISTÊNCIA LOCAL (localStorage) ---
-function loadDataFromStorage() {
-  const data = localStorage.getItem('LEVEL_UP_KIDS_DATA');
-  if (data) {
-    state.students = JSON.parse(data);
-  } else {
-    state.students = INITIAL_DATA;
-    saveDataToStorage();
+
+// --- PERSISTÊNCIA ONLINE (SUPABASE) ---
+
+async function loadDataFromStorage() {
+  const { data, error } = await supabaseClient
+    .from('students')
+    .select('*');
+
+  if (error) {
+    console.error('Erro ao carregar alunos:', error);
+    alert('Erro ao conectar ao banco de dados.');
+    return;
+  }
+
+  if (data && data.length > 0) {
+    state.students = data.map(student => ({
+      id: student.id,
+      name: student.name,
+      avatar: student.avatar,
+      totalXP: student.total_xp || 0,
+      walletXP: student.wallet_xp || 0,
+      weeklyXP: student.weekly_xp || 0,
+      missionCompleted: student.mission_completed || false,
+      unlockedBadges: student.unlocked_badges || [],
+      history: student.history || []
+    }));
+
+    return;
+  }
+
+  for (const student of INITIAL_DATA) {
+    await saveStudentToSupabase(student);
+  }
+
+  state.students = [...INITIAL_DATA];
+}
+
+async function saveDataToStorage() {
+  for (const student of state.students) {
+    await saveStudentToSupabase(student);
   }
 }
 
-function saveDataToStorage() {
-  localStorage.setItem('LEVEL_UP_KIDS_DATA', JSON.stringify(state.students));
+async function saveStudentToSupabase(student) {
+  const { error } = await supabaseClient
+    .from('students')
+    .upsert({
+      id: student.id,
+      name: student.name,
+      avatar: student.avatar,
+      total_xp: student.totalXP,
+      wallet_xp: student.walletXP,
+      weekly_xp: student.weeklyXP,
+      mission_completed: student.missionCompleted,
+      unlocked_badges: student.unlockedBadges,
+      history: student.history
+    });
+
+  if (error) {
+    console.error('Erro ao salvar aluno:', error);
+  }
 }
 
 // --- NAVEGAÇÃO ENTRE ABAS ---
