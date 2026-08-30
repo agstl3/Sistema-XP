@@ -86,7 +86,7 @@ async function loadDataFromStorage() {
 
   if (error) {
     console.error('Erro ao carregar alunos:', error);
-    alert('Erro ao conectar ao banco de dados.');
+    alert('ERRO SUPABASE: ' + error.message);
     return;
   }
 
