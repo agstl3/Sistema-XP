@@ -332,7 +332,7 @@ function renderStore() {
       <button class="btn ${canAfford ? 'btn-gold' : ''}" 
               ${!canAfford ? 'disabled' : ''} 
               onclick="buyStoreItem('${item.id}', ${item.cost}, '${item.name}')">
-        ${canAfford ? 'RESGATAR 🎁' : 'XP INSCRICIENTE'}
+        ${canAfford ? 'RESGATAR 🎁' : 'XP INSUFICIENTE'}
       </button>
     `;
     grid.appendChild(card);
