@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEVEL UP KIDS - Minha Jornada com Deus</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Fonte com apelo Gamer/Adventure -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- BANNER SUPERIOR / HEADER -->
+  <header class="game-header">
+    <div class="logo-container">
+      <span class="cross-icon">✝️</span>
+      <div>
+        <h1 class="game-title">LEVEL UP KIDS</h1>
+        <p class="game-subtitle">MINHA JORNADA COM DEUS</p>
+      </div>
+    </div>
+    
+    <!-- NAVEGAÇÃO ENTRE ABAS -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('kids-tab')">🎮 Área do Aluno</button>
+      <button class="tab-btn" onclick="switchTab('store-tab')">🛍️ Loja XP</button>
+      <button class="tab-btn admin-btn" onclick="switchTab('admin-tab')">👑 Prof / Admin</button>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- ==================== ÁREA DA CRIANÇA ==================== -->
+    <section id="kids-tab" class="tab-content active">
+      
+      <!-- SELETOR DE PERFIL DA CRIANÇA -->
+      <div class="profile-selector-card">
+        <label for="student-selector">👤 Selecionar Aluno:</label>
+        <select id="student-selector" onchange="loadStudentDashboard(this.value)">
+          <!-- Preenchido dinamicamente via JS -->
+        </select>
+      </div>
+
+      <!-- DASHBOARD DO JOGADOR -->
+      <div id="student-dashboard" class="dashboard-grid">
+        
+        <!-- CARD PRINCIPAL DE STATUS -->
+        <div class="card status-card">
+          <div class="avatar-wrapper">
+            <span id="dash-avatar" class="player-avatar">🛡️</span>
+            <div id="dash-level-badge" class="level-badge">LVL 1</div>
+          </div>
+          <div class="player-info">
+            <h2 id="dash-name">Nome do Aluno</h2>
+            <p id="dash-title" class="rank-title">Nível 1 — COMEÇANDO</p>
+            
+            <!-- BARRA DE PROGRESSO DE XP -->
+            <div class="xp-bar-container">
+              <div class="xp-bar-labels">
+                <span>XP ACUMULADO</span>
+                <span id="dash-xp-ratio">0 / 100 XP</span>
+              </div>
+              <div class="xp-progress-outer">
+                <div id="dash-xp-progress" class="xp-progress-inner" style="width: 0%;"></div>
+              </div>
+              <p id="dash-next-level" class="next-level-text">Faltam 100 XP para Nível 2</p>
+            </div>
+
+            <!-- CARDS DE XP ACUMULADO VS DISPONÍVEL -->
+            <div class="xp-counters">
+              <div class="xp-counter-box total">
+                <span class="label">Total Histórico</span>
+                <span id="dash-xp-total" class="value">0 XP</span>
+              </div>
+              <div class="xp-counter-box wallet">
+                <span class="label">Disponível p/ Troca</span>
+                <span id="dash-xp-wallet" class="value">⭐ 0 XP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MISSÃO DA SEMANA -->
+        <div class="card mission-card">
+          <h3>🎯 MISSÃO DA SEMANA</h3>
+          <div class="mission-box">
+            <div class="mission-icon">📜</div>
+            <div class="mission-details">
+              <h4 id="dash-mission-title">Ler Salmos 23 em família</h4>
+              <p>Conclua e ganhe <strong>+50 XP Extra</strong>!</p>
+              <span id="dash-mission-status" class="status-pill pending">Em Andamento</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONQUISTAS & MEDALHAS -->
+        <div class="card badges-card">
+          <h3>🏆 MINHAS MEDALHAS</h3>
+          <div id="dash-badges-grid" class="badges-grid">
+            <!-- Gerado via JS -->
+          </div>
+        </div>
+
+        <!-- HISTÓRICO RECENTE -->
+        <div class="card history-card">
+          <h3>📜 HISTÓRICO DE XP</h3>
+          <ul id="dash-history-list" class="history-list">
+            <!-- Lista de Histórico -->
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== LOJA LEVEL UP ==================== -->
+    <section id="store-tab" class="tab-content">
+      <div class="store-header">
+        <div>
+          <h2>🛍️ LOJA LEVEL UP</h2>
+          <p>Troque seu XP Disponível por recompensas incríveis!</p>
+        </div>
+        <div class="wallet-badge">
+          <span>Saldo Disponível:</span>
+          <strong id="store-wallet-amount">0 XP</strong>
+        </div>
+      </div>
+
+      <div id="store-grid" class="store-grid">
+        <!-- Itens da Loja Renderizados pelo JS -->
+      </div>
+    </section>
+
+    <!-- ==================== ÁREA DO PROFESSOR (ADMIN) ==================== -->
+    <section id="admin-tab" class="tab-content">
+      
+      <div class="admin-grid">
+        
+        <!-- CADASTRAR NOVA CRIANÇA -->
+        <div class="card admin-form-card">
+          <h3>➕ Cadastrar Novo Aluno</h3>
+          <form id="add-student-form" onsubmit="handleAddStudent(event)">
+            <div class="form-group">
+              <label>Nome da Criança:</label>
+              <input type="text" id="new-student-name" required placeholder="Ex: Lucas Silva">
+            </div>
+            <div class="form-group">
+              <label>Escolha o Avatar:</label>
+              <select id="new-student-avatar">
+                <option value="🦁">🦁 Leão</option>
+                <option value="🛡️">🛡️ Guerreiro</option>
+                <option value="👑">👑 Rei/Rainha</option>
+                <option value="🦅">🦅 Águia</option>
+                <option value="🔥">🔥 Fogo</option>
+                <option value="⭐">⭐ Estrela</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-success">Cadastrar Aluno</button>
+          </form>
+        </div>
+
+        <!-- PAINEL DE PONTUAÇÃO E GERENCIAMENTO -->
+        <div class="card admin-actions-card">
+          <h3>⚡ Lançar XP Semanal</h3>
+          
+          <div class="form-group">
+            <label>Selecione o Aluno:</label>
+            <select id="admin-student-select" onchange="syncAdminSelection(this.value)">
+              <!-- Preenchido via JS -->
+            </select>
+          </div>
+
+          <!-- STATUS SEMANAL -->
+          <div class="weekly-limit-banner">
+            <span>XP Regulamentar da Semana:</span>
+            <strong id="admin-weekly-xp">0 / 150 XP</strong>
+          </div>
+
+          <!-- BOTÕES DAS AÇÕES REGULARES -->
+          <div class="actions-grid">
+            <button class="action-btn" onclick="grantXP(10, '📖 Trouxe a Bíblia', false)">📖 Trouxe Bíblia (+10)</button>
+            <button class="action-btn" onclick="grantXP(20, '📚 Leu a Bíblia semanalmente', false)">📚 Leu Bíblia (+20)</button>
+            <button class="action-btn" onclick="grantXP(10, '🙏 Participou da oração', false)">🙏 Oração (+10)</button>
+            <button class="action-btn" onclick="grantXP(10, '🎶 Participou do louvor', false)">🎶 Louvor (+10)</button>
+            <button class="action-btn" onclick="grantXP(10, '🧠 Respondeu pergunta bíblica', false)">🧠 Pergunta (+10)</button>
+            <button class="action-btn" onclick="grantXP(20, '🎯 Desafio do culto', false)">🎯 Desafio Culto (+20)</button>
+            <button class="action-btn" onclick="grantXP(20, '🤝 Ajudou alguém', false)">🤝 Ajudou alguém (+20)</button>
+            <button class="action-btn" onclick="grantXP(30, '❤️ Boa ação semanal', false)">❤️ Boa ação (+30)</button>
+            <button class="action-btn" onclick="grantXP(30, '📝 Memorizou versículo', false)">📝 Versículo (+30)</button>
+            <button class="action-btn highlight" onclick="grantXP(50, '🌟 Atitude de destaque', false)">🌟 Destaque (+50)</button>
+          </div>
+
+          <hr class="divider">
+
+          <!-- AÇÕES DE MISSÃO & CONQUISTAS -->
+          <h4>🎯 Missão & Conquistas Especiais</h4>
+          <div class="special-actions">
+            <button class="btn btn-purple" onclick="completeMission()">🎯 Marcar Missão (+50 XP Extra)</button>
+          </div>
+
+          <h4 style="margin-top: 15px;">🏅 Desbloquear Medalhas Manuais</h4>
+          <div id="admin-badges-list" class="admin-badges-flex">
+            <!-- Gerado via JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODAL DE LEVEL UP! -->
+  <div id="levelup-modal" class="modal-overlay">
+    <div class="modal-content levelup-box">
+      <div class="sparkles">✨🌟✨</div>
+      <h1 class="modal-title">LEVEL UP!</h1>
+      <p class="modal-subtitle">VOCÊ SUBIU DE NÍVEL!</p>
+      <div id="modal-new-level" class="modal-level-display">NÍVEL 2</div>
+      <p id="modal-level-name" class="modal-level-name">EXPLORADOR</p>
+      <button class="btn btn-gold" onclick="closeLevelUpModal()">CONTINUAR JORNADA! 🚀</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
