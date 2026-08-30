@@ -66,7 +66,7 @@ let state = {
 
 // --- INICIALIZAÇÃO ---
 document.addEventListener('DOMContentLoaded', async () => {
-  loadDataFromStorage();
+  await loadDataFromStorage();
   renderStudentSelectors();
   if (state.students.length > 0) {
     state.selectedStudentId = state.students[0].id;
